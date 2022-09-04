@@ -13,6 +13,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const style = { width: '100%', marginTop: 12 }
+var intervalObj = null
 
 const index: React.FC<Props> = (props) => {
   // Hooks
@@ -29,12 +30,66 @@ const index: React.FC<Props> = (props) => {
   const getInputValue = (e) => {
     if (e.target.value == '') {
       e.target.value = '0'
-    }
+    };
     var value = value = parseInt(e.target.value)
     if (value < 1) {
       value = 1
     }
     return value
+  }
+
+  const getButtonText = () => {
+    if (states.pomoState == 'idle') {
+      return "START"
+    }
+    else {
+      return "STOP"
+    }
+  }
+
+  const startWorkTimer = () => {
+    controller.setState({
+      pomoState: 'work'
+    })
+    var currentTimer = states.currentTimer;
+
+    intervalObj = setInterval(() => {
+      currentTimer--
+
+      if (currentTimer < 0) {
+        if (states.pomoState == 'work') {
+          currentTimer = states.breakTime * 60
+
+          controller.setState({
+            currentTimer: currentTimer,
+            pomoState: 'break'
+          })
+        }
+        else if (states.pomoState == 'break') {
+          currentTimer = states.workTime * 60
+
+          controller.setState({
+            currentTimer: currentTimer,
+            pomoState: 'idle'
+          })
+        }
+        clearInterval(intervalObj)
+      }
+      else {
+        controller.setState({
+          currentTimer: currentTimer
+        })
+      }
+    }, 1000)
+  }
+
+  const stopWorkTimer = () => {
+    clearInterval(intervalObj)
+    intervalObj = null
+    controller.setState({
+      pomoState: 'idle',
+      currentTimer: states.workTime * 60
+    })
   }
 
   // Vars
@@ -43,26 +98,30 @@ const index: React.FC<Props> = (props) => {
 
   return (
     <Grid container direction='column' justifyContent='center' alignContent='center' alignItems='center' style={{ padding: 16 }}>
-      <Typography style={{ fontSize: 16 }} variant='h6'>Pomota</Typography>
-      <Typography variant='h6'>{new Date(states.currentTimer * 1000).toISOString().substring(14, 19)}</Typography>
-      <TextField onChange={(e) => {
+      <Typography style={{ fontSize: 16, fontWeight: 700 }} variant='h6'>{states.pomoState.toUpperCase()}</Typography>
+      <Typography style={{ fontSize: 24 }} variant='h6'>...::: {new Date(states.currentTimer * 1000).toISOString().substring(14, 19)} :::...</Typography>
+      <TextField disabled={states.pomoState !== 'idle'} onChange={(e) => {
         controller.setState({
           workTime: getInputValue(e),
           currentTimer: getInputValue(e) * 60,
         })
       }} style={{ ...style, marginTop: 16 }} label='Work time ( minutes )' variant='outlined' value={states.workTime} type='number' />
-      <TextField onChange={(e) => {
+      <TextField disabled={states.pomoState !== 'idle'} onChange={(e) => {
         controller.setState({
           breakTime: getInputValue(e)
         })
       }} style={style} label='Break time ( minutes )' variant='outlined' value={states.breakTime} type='number' />
       <Button style={style} variant='outlined'
         onClick={() => {
-          controller.setState({
-            pomoState: 'work'
-          })
+          if (intervalObj == null) {
+            startWorkTimer()
+          }
+          else {
+            stopWorkTimer()
+          }
+
         }}
-      >Start</Button>
+      >{getButtonText()}</Button>
     </Grid>
   )
 

@@ -10,8 +10,8 @@ export interface IStates {
 export class Controller {
     @state
     states: IStates = {
-        workTime: 25,
-        breakTime: 5,
+        workTime: 1,
+        breakTime: 1,
         pomoState: 'idle',
         currentTimer: 0
     }
