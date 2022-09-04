@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Button, Grid, TextField, Typography } from "@material-ui/core";
 import { useSelector } from 'react-redux';
 import { controller } from '../utils/StatesController';
+import { WebviewWindow } from '@tauri-apps/api/window';
 
 interface Props {
 
@@ -14,6 +15,7 @@ const useStyles = makeStyles((theme) => ({
 
 const style = { width: '100%', marginTop: 12 }
 var intervalObj = null
+var appWindow: WebviewWindow = null
 
 const index: React.FC<Props> = (props) => {
   // Hooks
@@ -25,11 +27,15 @@ const index: React.FC<Props> = (props) => {
       currentTimer: states.workTime * 60
       // currentTimer: 3
     })
+    if (typeof window !== "undefined") {
+      import('@tauri-apps/api/window').then((obj) => {
+        appWindow = obj.appWindow
+      })
+    }
 
   }, [])
 
   // Funcs
-
   const getInputValue = (e) => {
     if (e.target.value == '') {
       e.target.value = '0'
@@ -114,12 +120,16 @@ const index: React.FC<Props> = (props) => {
       }} style={style} label='Break time ( minutes )' variant='outlined' value={states.breakTime} type='number' />
       <Button style={style} variant='outlined'
         onClick={async () => {
-          if (intervalObj == null) {
-            startWorkTimer()
-          }
-          else {
-            stopWorkTimer()
-          }
+          // if (intervalObj == null) {
+          //   startWorkTimer()
+          // }
+          // else {
+          //   stopWorkTimer()
+          // }
+          appWindow?.setAlwaysOnTop(true)
+          appWindow?.setFullscreen(true)
+          // appWindow.maximize()
+          // appWindow.unmaximize()
         }}
       >{getButtonText()}</Button>
     </Grid>
