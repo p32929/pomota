@@ -22,7 +22,8 @@ const index: React.FC<Props> = (props) => {
 
   useEffect(() => {
     controller.setState({
-      currentTimer: states.workTime * 60
+      // currentTimer: states.workTime * 60
+      currentTimer: 3
     })
   }, [])
 
@@ -48,47 +49,48 @@ const index: React.FC<Props> = (props) => {
   }
 
   const startWorkTimer = () => {
+    console.log("START")
     controller.setState({
       pomoState: 'work'
     })
-    var currentTimer = states.currentTimer;
+    var timerNow = controller.states.currentTimer;
 
     intervalObj = setInterval(() => {
-      currentTimer--
+      timerNow--
 
-      if (currentTimer < 0) {
-        if (states.pomoState == 'work') {
-          currentTimer = states.breakTime * 60
+      if (timerNow < 0) {
+        if (controller.states.pomoState == 'work') {
+          console.log(`1`)
+          timerNow = 5
 
           controller.setState({
-            currentTimer: currentTimer,
+            currentTimer: timerNow,
             pomoState: 'break'
           })
         }
-        else if (states.pomoState == 'break') {
-          currentTimer = states.workTime * 60
-
-          controller.setState({
-            currentTimer: currentTimer,
-            pomoState: 'idle'
-          })
+        else if (controller.states.pomoState == 'break') {
+          console.log(`2`)
+          stopWorkTimer()
         }
-        clearInterval(intervalObj)
       }
       else {
         controller.setState({
-          currentTimer: currentTimer
+          currentTimer: timerNow
         })
+        console.log(`RUNNING`)
+        intervalObj = null
       }
+
     }, 1000)
   }
 
   const stopWorkTimer = () => {
+    console.log("STOP")
     clearInterval(intervalObj)
     intervalObj = null
     controller.setState({
       pomoState: 'idle',
-      currentTimer: states.workTime * 60
+      currentTimer: 12
     })
   }
 

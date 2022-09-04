@@ -11,13 +11,14 @@ export class Controller {
     @state
     states: IStates = {
         workTime: 1,
-        breakTime: 1,
+        breakTime: 3,
         pomoState: 'idle',
-        currentTimer: 0
+        currentTimer: 0,
     }
 
     @action
     setState(state: Partial<IStates>) {
+        // console.log(`SetState`, state)
         this.states = {
             ...this.states,
             ...state
