@@ -3,7 +3,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Button, Grid, TextField, Typography } from "@material-ui/core";
 import { useSelector } from 'react-redux';
 import { controller } from '../utils/StatesController';
-import { invoke } from '@tauri-apps/api/tauri';
 
 interface Props {
 
@@ -22,19 +21,14 @@ const index: React.FC<Props> = (props) => {
   const classes = useStyles();
 
   useEffect(() => {
-    if (window) {
-      controller.setState({
-        currentTimer: states.workTime * 60
-        // currentTimer: 3
-      })
-    }
+    controller.setState({
+      currentTimer: states.workTime * 60
+      // currentTimer: 3
+    })
+
   }, [])
 
   // Funcs
-
-  // async function greet() {
-  //   console.log(await invoke("greet", { name: "FFF" }))
-  // }
 
   const getInputValue = (e) => {
     if (e.target.value == '') {
@@ -126,7 +120,6 @@ const index: React.FC<Props> = (props) => {
           else {
             stopWorkTimer()
           }
-
         }}
       >{getButtonText()}</Button>
     </Grid>
