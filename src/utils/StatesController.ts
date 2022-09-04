@@ -10,15 +10,14 @@ export interface IStates {
 export class Controller {
     @state
     states: IStates = {
-        workTime: 1,
-        breakTime: 1,
+        workTime: 25,
+        breakTime: 5,
         pomoState: 'idle',
         currentTimer: 0,
     }
 
     @action
     setState(state: Partial<IStates>) {
-        // console.log(`SetState`, state)
         this.states = {
             ...this.states,
             ...state

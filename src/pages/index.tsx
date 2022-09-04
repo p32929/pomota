@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Button, Grid, TextField, Typography } from "@material-ui/core";
 import { useSelector } from 'react-redux';
 import { controller } from '../utils/StatesController';
+import { invoke } from '@tauri-apps/api/tauri';
 
 interface Props {
 
@@ -21,13 +22,20 @@ const index: React.FC<Props> = (props) => {
   const classes = useStyles();
 
   useEffect(() => {
-    controller.setState({
-      currentTimer: states.workTime * 60
-      // currentTimer: 3
-    })
+    if (window) {
+      controller.setState({
+        currentTimer: states.workTime * 60
+        // currentTimer: 3
+      })
+    }
   }, [])
 
   // Funcs
+
+  // async function greet() {
+  //   console.log(await invoke("greet", { name: "FFF" }))
+  // }
+
   const getInputValue = (e) => {
     if (e.target.value == '') {
       e.target.value = '0'
@@ -60,7 +68,6 @@ const index: React.FC<Props> = (props) => {
 
       if (timerNow < 0) {
         if (controller.states.pomoState == 'work') {
-          console.log(`1`)
           timerNow = controller.states.breakTime * 60
 
           controller.setState({
@@ -69,7 +76,6 @@ const index: React.FC<Props> = (props) => {
           })
         }
         else if (controller.states.pomoState == 'break') {
-          console.log(`2`)
           stopWorkTimer()
         }
       }
@@ -77,7 +83,6 @@ const index: React.FC<Props> = (props) => {
         controller.setState({
           currentTimer: timerNow
         })
-        console.log(`TICK`)
         intervalObj = null
       }
 
@@ -100,7 +105,7 @@ const index: React.FC<Props> = (props) => {
 
   return (
     <Grid container direction='column' justifyContent='center' alignContent='center' alignItems='center' style={{ padding: 16 }}>
-      <Typography style={{ fontSize: 16, fontWeight: 700 }} variant='h6'>{states.pomoState.toUpperCase()}</Typography>
+      <Typography style={{ fontSize: 16 }} variant='h6'>{states.pomoState.toUpperCase()}</Typography>
       <Typography style={{ fontSize: 24 }} variant='h6'>...::: {new Date(states.currentTimer * 1000).toISOString().substring(14, 19)} :::...</Typography>
       <TextField disabled={states.pomoState !== 'idle'} onChange={(e) => {
         controller.setState({
@@ -114,7 +119,7 @@ const index: React.FC<Props> = (props) => {
         })
       }} style={style} label='Break time ( minutes )' variant='outlined' value={states.breakTime} type='number' />
       <Button style={style} variant='outlined'
-        onClick={() => {
+        onClick={async () => {
           if (intervalObj == null) {
             startWorkTimer()
           }
