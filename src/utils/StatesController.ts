@@ -11,7 +11,7 @@ export class Controller {
     @state
     states: IStates = {
         workTime: 1,
-        breakTime: 3,
+        breakTime: 1,
         pomoState: 'idle',
         currentTimer: 0,
     }
