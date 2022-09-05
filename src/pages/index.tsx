@@ -83,7 +83,6 @@ const index: React.FC<Props> = (props) => {
         controller.setState({
           currentTimer: timerNow
         })
-        intervalObj = null
       }
 
     }, 1000)
@@ -119,17 +118,13 @@ const index: React.FC<Props> = (props) => {
         })
       }} style={style} label='Break time ( minutes )' variant='outlined' value={states.breakTime} type='number' />
       <Button style={style} variant='outlined'
-        onClick={async () => {
-          // if (intervalObj == null) {
-          //   startWorkTimer()
-          // }
-          // else {
-          //   stopWorkTimer()
-          // }
-          appWindow?.setAlwaysOnTop(true)
-          appWindow?.setFullscreen(true)
-          // appWindow.maximize()
-          // appWindow.unmaximize()
+        onClick={() => {
+          if (intervalObj == null) {
+            startWorkTimer()
+          }
+          else {
+            stopWorkTimer()
+          }
         }}
       >{getButtonText()}</Button>
     </Grid>
