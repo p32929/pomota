@@ -26,6 +26,7 @@ const index: React.FC<Props> = (props) => {
     appWindow.show()
     appWindow.setFullscreen(true)
     appWindow.setAlwaysOnTop(true)
+    appWindow.setFocus()
   }
 
   const setOriginalSize = () => {
