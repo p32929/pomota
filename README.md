@@ -8,7 +8,7 @@ A simple user-friendly cross-platform tauri based pomodoro timer app that forces
 
 ## Download
 
-From here: https://github.com/p32929/pomota/releases/tag/untagged-fe629d493d30c4acfc7d
+From here: https://github.com/p32929/pomota/releases
 
 ## Share with your friends
 
