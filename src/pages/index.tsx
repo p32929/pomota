@@ -4,6 +4,7 @@ import { Button, Grid, TextField, Typography } from "@material-ui/core";
 import { useSelector } from 'react-redux';
 import { controller } from '../utils/StatesController';
 import { WebviewWindow } from '@tauri-apps/api/window';
+import * as wt from 'worker-timers';
 
 interface Props {
 
@@ -76,7 +77,7 @@ const index: React.FC<Props> = (props) => {
     })
     var timerNow = controller.states.currentTimer;
 
-    intervalObj = setInterval(() => {
+    intervalObj = wt.setInterval(() => {
       timerNow--
 
       if (timerNow < 0) {
@@ -105,7 +106,7 @@ const index: React.FC<Props> = (props) => {
 
   const stopWorkTimer = () => {
     console.log("STOP")
-    clearInterval(intervalObj)
+    wt.clearInterval(intervalObj)
     controller.setState({
       pomoState: 'idle',
       currentTimer: controller.states.workTime * 60
