@@ -4,6 +4,7 @@ import { Button, Grid, TextField, Typography } from "@material-ui/core";
 import { useSelector } from 'react-redux';
 import { controller } from '../utils/StatesController';
 import { WebviewWindow } from '@tauri-apps/api/window';
+import { listen } from '@tauri-apps/api/event';
 import * as wt from 'worker-timers';
 
 interface Props {
@@ -44,6 +45,10 @@ const index: React.FC<Props> = (props) => {
     if (typeof window !== "undefined") {
       import('@tauri-apps/api/window').then((obj) => {
         appWindow = obj.appWindow
+      })
+
+      listen('single-instance', ({ event, payload, id, windowLabel }) => {
+        appWindow.setFocus()
       })
     }
 
