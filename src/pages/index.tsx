@@ -34,9 +34,12 @@ const index: React.FC<Props> = (props) => {
   }
 
   const setOriginalSize = async () => {
+    await appWindow.show()
+    await appWindow.center()
     await appWindow.setFullscreen(false)
     await appWindow.setAlwaysOnTop(false)
     await appWindow.unmaximize()
+    await appWindow.setFocus()
   }
 
   useEffect(() => {
