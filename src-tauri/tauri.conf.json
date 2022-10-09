@@ -11,6 +11,10 @@
     "version": "0.0.1"
   },
   "tauri": {
+    "systemTray": {
+      "iconPath": "icons/icon.png",
+      "iconAsTemplate": true
+    },
     "allowlist": {
       "all": true
     },
@@ -59,7 +63,8 @@
         "height": 300,
         "resizable": false,
         "title": "pomota",
-        "width": 300
+        "width": 300,
+        "center": true
       }
     ]
   }

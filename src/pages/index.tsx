@@ -24,23 +24,25 @@ const index: React.FC<Props> = (props) => {
   const states = useSelector(() => controller.states);
   const classes = useStyles();
 
-  const bringToFocus = () => {
-    appWindow.unminimize()
-    appWindow.setFullscreen(true)
-    appWindow.setAlwaysOnTop(true)
-    appWindow.setFocus()
+  const bringToFocus = async () => {
+    await appWindow.unminimize()
+    await appWindow.show()
+    await appWindow.center()
+    await appWindow.setFullscreen(true)
+    await appWindow.setAlwaysOnTop(true)
+    await appWindow.setFocus()
   }
 
-  const setOriginalSize = () => {
-    appWindow.setFullscreen(false)
-    appWindow.setAlwaysOnTop(false)
-    appWindow.unmaximize()
+  const setOriginalSize = async () => {
+    await appWindow.setFullscreen(false)
+    await appWindow.setAlwaysOnTop(false)
+    await appWindow.unmaximize()
   }
 
   useEffect(() => {
     controller.setState({
-      currentTimer: states.workTime * 60
-      // currentTimer: 3
+      // currentTimer: states.workTime * 60
+      currentTimer: 6
     })
     if (typeof window !== "undefined") {
       import('@tauri-apps/api/window').then((obj) => {
@@ -87,8 +89,8 @@ const index: React.FC<Props> = (props) => {
 
       if (timerNow < 0) {
         if (controller.states.pomoState == 'work') {
-          // timerNow = 5
-          timerNow = controller.states.breakTime * 60
+          timerNow = 5
+          // timerNow = controller.states.breakTime * 60
 
           controller.setState({
             currentTimer: timerNow,
