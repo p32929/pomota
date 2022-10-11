@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Grid, TextField, Typography } from "@material-ui/core";
 import { useSelector } from 'react-redux';
-import { controller } from '../utils/StatesController';
+import { controller, initialState, IStates } from '../utils/StatesController';
 import { WebviewWindow } from '@tauri-apps/api/window';
 import { listen } from '@tauri-apps/api/event';
 import * as wt from 'worker-timers';
@@ -15,6 +15,7 @@ const useStyles = makeStyles((theme) => ({
   // Define your styles here
 }));
 
+const STORED_STATE = "STORED_STATE"
 const style = { width: '100%', marginTop: 12 }
 var intervalObj = null
 var appWindow: WebviewWindow = null
@@ -27,7 +28,6 @@ const index: React.FC<Props> = (props) => {
   const bringToFocus = async () => {
     await appWindow.unminimize()
     await appWindow.show()
-    await appWindow.center()
     await appWindow.setFullscreen(true)
     await appWindow.setAlwaysOnTop(true)
     await appWindow.setFocus()
@@ -35,7 +35,6 @@ const index: React.FC<Props> = (props) => {
 
   const setOriginalSize = async () => {
     await appWindow.show()
-    await appWindow.center()
     await appWindow.setFullscreen(false)
     await appWindow.setAlwaysOnTop(false)
     await appWindow.unmaximize()
@@ -43,10 +42,9 @@ const index: React.FC<Props> = (props) => {
   }
 
   useEffect(() => {
-    controller.setState({
-      currentTimer: states.workTime * 60
-      // currentTimer: 6
-    })
+    const savedStateObj = getSavedStateObj()
+    controller.setState(savedStateObj)
+
     if (typeof window !== "undefined") {
       import('@tauri-apps/api/window').then((obj) => {
         appWindow = obj.appWindow
@@ -69,6 +67,28 @@ const index: React.FC<Props> = (props) => {
       value = 1
     }
     return value
+  }
+
+  const saveStateObj = () => {
+    localStorage.setItem(STORED_STATE, JSON.stringify(controller.states))
+  }
+
+  const getSavedStateObj = (): IStates => {
+    const savedState: IStates = JSON.parse(localStorage.getItem(STORED_STATE))
+    if (savedState) {
+      return {
+        ...savedState,
+        pomoState: 'idle',
+        currentTimer: savedState.workTime * 60
+      }
+    }
+    else {
+      return {
+        ...initialState,
+        pomoState: 'idle',
+        currentTimer: initialState.workTime * 60
+      }
+    }
   }
 
   const getButtonText = () => {
@@ -160,6 +180,7 @@ const index: React.FC<Props> = (props) => {
         onClick={() => {
           if (intervalObj == null) {
             startWorkTimer()
+            saveStateObj()
           }
           else {
             stopWorkTimer()
