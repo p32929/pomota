@@ -8,7 +8,7 @@
   },
   "package": {
     "productName": "pomota",
-    "version": "0.0.1"
+    "version": "0.0.3"
   },
   "tauri": {
     "systemTray": {
@@ -60,10 +60,10 @@
     "windows": [
       {
         "fullscreen": false,
-        "height": 300,
+        "height": 360,
         "resizable": false,
         "title": "pomota",
-        "width": 300,
+        "width": 360,
         "center": true
       }
     ]

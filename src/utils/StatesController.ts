@@ -4,6 +4,7 @@ export interface IStates {
     workTime: number,
     breakTime: number,
     pomoState: 'work' | 'break' | 'idle',
+    warningSecs: number,
     currentTimer: number
 }
 
@@ -12,6 +13,7 @@ export class Controller {
     states: IStates = {
         workTime: 50,
         breakTime: 10,
+        warningSecs: 30,
         pomoState: 'idle',
         currentTimer: 0,
     }

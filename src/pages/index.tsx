@@ -85,6 +85,8 @@ const index: React.FC<Props> = (props) => {
     controller.setState({
       pomoState: 'work'
     })
+    const warningSound = new Audio('warning.mp3')
+    const finishSound = new Audio('finish.mp3')
     var timerNow = controller.states.currentTimer;
 
     intervalObj = wt.setInterval(() => {
@@ -104,8 +106,13 @@ const index: React.FC<Props> = (props) => {
         else if (controller.states.pomoState == 'break') {
           stopWorkTimer()
         }
+        finishSound.play()
       }
       else {
+        if (timerNow <= controller.states.warningSecs) {
+          warningSound.play()
+        }
+
         controller.setState({
           currentTimer: timerNow
         })
@@ -144,6 +151,11 @@ const index: React.FC<Props> = (props) => {
           breakTime: getInputValue(e)
         })
       }} style={style} label='Break time ( minutes )' variant='outlined' value={states.breakTime} type='number' />
+      <TextField disabled={states.pomoState !== 'idle'} onChange={(e) => {
+        controller.setState({
+          warningSecs: getInputValue(e)
+        })
+      }} style={style} label='Play warning sound be/for ( seconds )' variant='outlined' value={states.warningSecs} type='number' />
       <Button style={style} variant='outlined'
         onClick={() => {
           if (intervalObj == null) {
