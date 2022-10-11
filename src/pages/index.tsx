@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Grid, TextField, Typography } from "@material-ui/core";
 import { useSelector } from 'react-redux';
-import { controller } from '../utils/StatesController';
+import { controller, initialState, IStates } from '../utils/StatesController';
 import { WebviewWindow } from '@tauri-apps/api/window';
 import { listen } from '@tauri-apps/api/event';
 import * as wt from 'worker-timers';
@@ -15,6 +15,7 @@ const useStyles = makeStyles((theme) => ({
   // Define your styles here
 }));
 
+const STORED_STATE = "STORED_STATE"
 const style = { width: '100%', marginTop: 12 }
 var intervalObj = null
 var appWindow: WebviewWindow = null
@@ -27,7 +28,6 @@ const index: React.FC<Props> = (props) => {
   const bringToFocus = async () => {
     await appWindow.unminimize()
     await appWindow.show()
-    await appWindow.center()
     await appWindow.setFullscreen(true)
     await appWindow.setAlwaysOnTop(true)
     await appWindow.setFocus()
@@ -35,7 +35,6 @@ const index: React.FC<Props> = (props) => {
 
   const setOriginalSize = async () => {
     await appWindow.show()
-    await appWindow.center()
     await appWindow.setFullscreen(false)
     await appWindow.setAlwaysOnTop(false)
     await appWindow.unmaximize()
@@ -43,10 +42,9 @@ const index: React.FC<Props> = (props) => {
   }
 
   useEffect(() => {
-    controller.setState({
-      currentTimer: states.workTime * 60
-      // currentTimer: 6
-    })
+    const savedStateObj = getInitStateObj()
+    controller.setState(savedStateObj)
+
     if (typeof window !== "undefined") {
       import('@tauri-apps/api/window').then((obj) => {
         appWindow = obj.appWindow
@@ -71,6 +69,28 @@ const index: React.FC<Props> = (props) => {
     return value
   }
 
+  const saveStateObj = () => {
+    localStorage.setItem(STORED_STATE, JSON.stringify(controller.states))
+  }
+
+  const getInitStateObj = (): IStates => {
+    const savedState: IStates = JSON.parse(localStorage.getItem(STORED_STATE))
+    if (savedState) {
+      return {
+        ...savedState,
+        pomoState: 'idle',
+        currentTimer: savedState.workTime * 60
+      }
+    }
+    else {
+      return {
+        ...initialState,
+        pomoState: 'idle',
+        currentTimer: initialState.workTime * 60
+      }
+    }
+  }
+
   const getButtonText = () => {
     if (states.pomoState == 'idle') {
       return "START"
@@ -85,6 +105,8 @@ const index: React.FC<Props> = (props) => {
     controller.setState({
       pomoState: 'work'
     })
+    const warningSound = new Audio('warning.mp3')
+    const finishSound = new Audio('finish.mp3')
     var timerNow = controller.states.currentTimer;
 
     intervalObj = wt.setInterval(() => {
@@ -104,8 +126,13 @@ const index: React.FC<Props> = (props) => {
         else if (controller.states.pomoState == 'break') {
           stopWorkTimer()
         }
+        finishSound.play()
       }
       else {
+        if (timerNow <= controller.states.warningSecs) {
+          warningSound.play()
+        }
+
         controller.setState({
           currentTimer: timerNow
         })
@@ -144,10 +171,16 @@ const index: React.FC<Props> = (props) => {
           breakTime: getInputValue(e)
         })
       }} style={style} label='Break time ( minutes )' variant='outlined' value={states.breakTime} type='number' />
+      <TextField disabled={states.pomoState !== 'idle'} onChange={(e) => {
+        controller.setState({
+          warningSecs: getInputValue(e)
+        })
+      }} style={style} label='Play warning sound be/for ( seconds )' variant='outlined' value={states.warningSecs} type='number' />
       <Button style={style} variant='outlined'
         onClick={() => {
           if (intervalObj == null) {
             startWorkTimer()
+            saveStateObj()
           }
           else {
             stopWorkTimer()
