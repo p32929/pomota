@@ -42,7 +42,7 @@ const index: React.FC<Props> = (props) => {
   }
 
   useEffect(() => {
-    const savedStateObj = getSavedStateObj()
+    const savedStateObj = getInitStateObj()
     controller.setState(savedStateObj)
 
     if (typeof window !== "undefined") {
@@ -73,7 +73,7 @@ const index: React.FC<Props> = (props) => {
     localStorage.setItem(STORED_STATE, JSON.stringify(controller.states))
   }
 
-  const getSavedStateObj = (): IStates => {
+  const getInitStateObj = (): IStates => {
     const savedState: IStates = JSON.parse(localStorage.getItem(STORED_STATE))
     if (savedState) {
       return {
