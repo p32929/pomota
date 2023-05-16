@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles';
-import { Button, Grid, TextField, Typography } from "@material-ui/core";
+import { AppBar, Button, Grid, TextField, Toolbar, Typography } from "@material-ui/core";
 import { useSelector } from 'react-redux';
 import { controller, initialState, IStates } from '../utils/StatesController';
 import { WebviewWindow } from '@tauri-apps/api/window';
@@ -57,7 +57,6 @@ const index: React.FC<Props> = (props) => {
 
   }, [])
 
-  // Funcs
   const getInputValue = (e) => {
     if (e.target.value == '') {
       e.target.value = '0'
@@ -114,7 +113,6 @@ const index: React.FC<Props> = (props) => {
 
       if (timerNow < 0) {
         if (controller.states.pomoState == 'work') {
-          // timerNow = 5
           timerNow = controller.states.breakTime * 60
 
           controller.setState({
@@ -152,43 +150,110 @@ const index: React.FC<Props> = (props) => {
     setOriginalSize()
   }
 
-  // Vars
-
-  // JSX
-
   return (
-    <Grid container direction='column' justifyContent='center' alignContent='center' alignItems='center' style={{ padding: 16 }}>
-      <Typography style={{ fontSize: 16 }} variant='h6'>{states.pomoState.toUpperCase()}</Typography>
-      <Typography style={{ fontSize: 24 }} variant='h6'>...::: {new Date(states.currentTimer * 1000).toISOString().substring(14, 19)} :::...</Typography>
-      <TextField disabled={states.pomoState !== 'idle'} onChange={(e) => {
-        controller.setState({
-          workTime: getInputValue(e),
-          currentTimer: getInputValue(e) * 60,
-        })
-      }} style={{ ...style, marginTop: 16 }} label='Work time ( minutes )' variant='outlined' value={states.workTime} type='number' />
-      <TextField disabled={states.pomoState !== 'idle'} onChange={(e) => {
-        controller.setState({
-          breakTime: getInputValue(e)
-        })
-      }} style={style} label='Break time ( minutes )' variant='outlined' value={states.breakTime} type='number' />
-      <TextField disabled={states.pomoState !== 'idle'} onChange={(e) => {
-        controller.setState({
-          warningSecs: getInputValue(e)
-        })
-      }} style={style} label='Play warning sound be/for ( seconds )' variant='outlined' value={states.warningSecs} type='number' />
-      <Button style={style} variant='outlined'
-        onClick={() => {
-          if (intervalObj == null) {
-            startWorkTimer()
-            saveStateObj()
-          }
-          else {
-            stopWorkTimer()
-          }
-        }}
-      >{getButtonText()}</Button>
-    </Grid>
+    <Grid container direction='column' justifyContent='center' alignContent='center' alignItems='center'>
+      <AppBar elevation={8} position='static'>
+        <Toolbar>
+          <Typography variant='h6' style={{ flexGrow: 1, fontWeight: 100, fontFamily: 'cursive' }}>
+            💻 {states.pomoState.toUpperCase()}
+          </Typography>
+
+          <Typography variant='h6' style={{ fontWeight: 100, fontFamily: 'cursive' }}>
+            ⏲️ {new Date(states.currentTimer * 1000).toISOString().substring(14, 19)}
+          </Typography>
+        </Toolbar>
+      </AppBar>
+
+      <Grid container direction='column' justifyContent='center' alignContent='center' alignItems='center' style={{ padding: 16 }}>
+        <TextField color='secondary' size='small' disabled={states.pomoState !== 'idle'} onChange={(e) => {
+          controller.setState({
+            workTime: getInputValue(e),
+            currentTimer: getInputValue(e) * 60,
+          })
+        }} style={{ ...style, marginTop: 16 }} label='Work time ( minutes )' variant='outlined' value={states.workTime} type='number' />
+        <TextField color='secondary' size='small' disabled={states.pomoState !== 'idle'} onChange={(e) => {
+          controller.setState({
+            breakTime: getInputValue(e)
+          })
+        }} style={style} label='Break time ( minutes )' variant='outlined' value={states.breakTime} type='number' />
+        <TextField color='secondary' size='small' disabled={states.pomoState !== 'idle'} onChange={(e) => {
+          controller.setState({
+            warningSecs: getInputValue(e)
+          })
+        }} style={style} label='Play warning sound be/for ( seconds )' variant='outlined' value={states.warningSecs} type='number' />
+        <Button color='secondary' size='small' style={style} variant='outlined'
+          onClick={() => {
+            if (intervalObj === null) {
+              startWorkTimer()
+              saveStateObj()
+            }
+            else {
+              stopWorkTimer()
+            }
+          }}
+        >{getButtonText()}</Button>
+
+        <Button color='secondary' disabled={states.pomoState !== 'idle'} size='small' style={style} variant='outlined'
+          onClick={() => {
+            controller.setState({
+              currentTimer: 0,
+            })
+            if (intervalObj === null) {
+              startWorkTimer()
+            }
+          }}
+        >BREAK</Button>
+      </Grid>
+
+    </Grid >
   )
+
+  // Ui V1
+  // return (
+  //   <Grid container direction='column' justifyContent='center' alignContent='center' alignItems='center' style={{ padding: 16 }}>
+  //     <Typography style={{ fontSize: 16 }} variant='h6'>{states.pomoState.toUpperCase()}</Typography>
+  //     <Typography style={{ fontSize: 24 }} variant='h6'>...::: {new Date(states.currentTimer * 1000).toISOString().substring(14, 19)} :::...</Typography>
+  //     <TextField size='small' disabled={states.pomoState !== 'idle'} onChange={(e) => {
+  //       controller.setState({
+  //         workTime: getInputValue(e),
+  //         currentTimer: getInputValue(e) * 60,
+  //       })
+  //     }} style={{ ...style, marginTop: 16 }} label='Work time ( minutes )' variant='outlined' value={states.workTime} type='number' />
+  //     <TextField size='small' disabled={states.pomoState !== 'idle'} onChange={(e) => {
+  //       controller.setState({
+  //         breakTime: getInputValue(e)
+  //       })
+  //     }} style={style} label='Break time ( minutes )' variant='outlined' value={states.breakTime} type='number' />
+  //     <TextField size='small' disabled={states.pomoState !== 'idle'} onChange={(e) => {
+  //       controller.setState({
+  //         warningSecs: getInputValue(e)
+  //       })
+  //     }} style={style} label='Play warning sound be/for ( seconds )' variant='outlined' value={states.warningSecs} type='number' />
+  //     <Button size='small' style={style} variant='outlined'
+  //       onClick={() => {
+  //         if (intervalObj == null) {
+  //           startWorkTimer()
+  //           saveStateObj()
+  //         }
+  //         else {
+  //           stopWorkTimer()
+  //         }
+  //       }}
+  //     >{getButtonText()}</Button>
+
+  //     <Button disabled={states.pomoState === 'break'} size='small' style={style} variant='outlined'
+  //       onClick={() => {
+  //         controller.setState({
+  //           currentTimer: 0,
+  //         })
+  //         if (intervalObj == null) {
+  //           startWorkTimer()
+  //         }
+  //       }}
+  //     >BREAK</Button>
+
+  //   </Grid>
+  // )
 
 }
 
