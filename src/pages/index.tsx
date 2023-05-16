@@ -57,7 +57,6 @@ const index: React.FC<Props> = (props) => {
 
   }, [])
 
-  // Funcs
   const getInputValue = (e) => {
     if (e.target.value == '') {
       e.target.value = '0'
@@ -114,7 +113,6 @@ const index: React.FC<Props> = (props) => {
 
       if (timerNow < 0) {
         if (controller.states.pomoState == 'work') {
-          // timerNow = 5
           timerNow = controller.states.breakTime * 60
 
           controller.setState({
@@ -152,31 +150,27 @@ const index: React.FC<Props> = (props) => {
     setOriginalSize()
   }
 
-  // Vars
-
-  // JSX
-
   return (
     <Grid container direction='column' justifyContent='center' alignContent='center' alignItems='center' style={{ padding: 16 }}>
       <Typography style={{ fontSize: 16 }} variant='h6'>{states.pomoState.toUpperCase()}</Typography>
       <Typography style={{ fontSize: 24 }} variant='h6'>...::: {new Date(states.currentTimer * 1000).toISOString().substring(14, 19)} :::...</Typography>
-      <TextField disabled={states.pomoState !== 'idle'} onChange={(e) => {
+      <TextField size='small' disabled={states.pomoState !== 'idle'} onChange={(e) => {
         controller.setState({
           workTime: getInputValue(e),
           currentTimer: getInputValue(e) * 60,
         })
       }} style={{ ...style, marginTop: 16 }} label='Work time ( minutes )' variant='outlined' value={states.workTime} type='number' />
-      <TextField disabled={states.pomoState !== 'idle'} onChange={(e) => {
+      <TextField size='small' disabled={states.pomoState !== 'idle'} onChange={(e) => {
         controller.setState({
           breakTime: getInputValue(e)
         })
       }} style={style} label='Break time ( minutes )' variant='outlined' value={states.breakTime} type='number' />
-      <TextField disabled={states.pomoState !== 'idle'} onChange={(e) => {
+      <TextField size='small' disabled={states.pomoState !== 'idle'} onChange={(e) => {
         controller.setState({
           warningSecs: getInputValue(e)
         })
       }} style={style} label='Play warning sound be/for ( seconds )' variant='outlined' value={states.warningSecs} type='number' />
-      <Button style={style} variant='outlined'
+      <Button size='small' style={style} variant='outlined'
         onClick={() => {
           if (intervalObj == null) {
             startWorkTimer()
@@ -187,6 +181,18 @@ const index: React.FC<Props> = (props) => {
           }
         }}
       >{getButtonText()}</Button>
+
+      <Button disabled={states.pomoState === 'break'} size='small' style={style} variant='outlined'
+        onClick={() => {
+          controller.setState({
+            currentTimer: 0,
+          })
+          if (intervalObj == null) {
+            startWorkTimer()
+          }
+        }}
+      >BREAK</Button>
+
     </Grid>
   )
 
