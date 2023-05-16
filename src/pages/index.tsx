@@ -154,12 +154,12 @@ const index: React.FC<Props> = (props) => {
     <Grid container direction='column' justifyContent='center' alignContent='center' alignItems='center'>
       <AppBar elevation={8} position='static'>
         <Toolbar>
-          <Typography variant='h6' style={{ flexGrow: 1 }}>
-            {states.pomoState.toUpperCase()}
+          <Typography variant='h6' style={{ flexGrow: 1, fontWeight: 100, fontFamily: 'cursive' }}>
+            💻 {states.pomoState.toUpperCase()}
           </Typography>
 
-          <Typography variant='h6' >
-            {new Date(states.currentTimer * 1000).toISOString().substring(14, 19)}
+          <Typography variant='h6' style={{ fontWeight: 100, fontFamily: 'cursive' }}>
+            ⏲️ {new Date(states.currentTimer * 1000).toISOString().substring(14, 19)}
           </Typography>
         </Toolbar>
       </AppBar>
