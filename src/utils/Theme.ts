@@ -7,7 +7,12 @@ export const theme = createTheme({
         appBar: 1,
         drawer: 0,
     },
+    // typography: {
+    //     fontFamily: "Manrope"
+    // },
     palette: {
-        type: 'dark'
+        type: 'dark',
+        primary: red,
+        secondary: teal,
     },
 });
