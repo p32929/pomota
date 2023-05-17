@@ -9,9 +9,11 @@ export interface IStates {
 }
 
 export const initialState: IStates = {
-    workTime: 50,
-    breakTime: 10,
-    warningSecs: 30,
+    // workTime: 50,
+    workTime: 0.1,
+    // breakTime: 10,
+    breakTime: 0.1,
+    warningSecs: 15,
     pomoState: 'idle',
     currentTimer: 0,
 }
