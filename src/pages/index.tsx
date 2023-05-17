@@ -48,6 +48,13 @@ const index: React.FC<Props> = (props) => {
     if (typeof window !== "undefined") {
       import('@tauri-apps/api/window').then((obj) => {
         appWindow = obj.appWindow
+
+        appWindow.onResized((size) => {
+          // console.log(`onResized`, size)
+          if (size.payload.height === 0 && size.payload.width === 0) {
+            appWindow.hide()
+          }
+        })
       })
 
       listen('single-instance', ({ event, payload, id, windowLabel }) => {
