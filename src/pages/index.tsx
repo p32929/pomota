@@ -69,9 +69,10 @@ const index: React.FC<Props> = (props) => {
       e.target.value = '0'
     };
     var value = value = parseInt(e.target.value)
-    if (value < 1) {
-      value = 1
-    }
+    // if (value < 1) {
+    //   value = 1
+    // }
+    // console.log(`Value: ${value}`)
     return value
   }
 
