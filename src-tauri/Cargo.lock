@@ -1617,7 +1617,7 @@ dependencies = [
 
 [[package]]
 name = "malloc_buf"
-version = "0.0.7"
+version = "0.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "62bb907fe88d54d8d9ce32a3cceab4218ed2f6b7d35617cafe9adf84e43919cb"
 dependencies = [
@@ -2222,7 +2222,7 @@ dependencies = [
 
 [[package]]
 name = "pomota"
-version = "0.0.7"
+version = "0.0.5"
 dependencies = [
  "serde",
  "serde_json",
