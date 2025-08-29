@@ -118,56 +118,87 @@ const useStyles = makeStyles((theme) => ({
   },
   dialog: {
     '& .MuiDialog-paper': {
-      backgroundColor: 'white',
-      color: '#333',
+      background: 'linear-gradient(145deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.95) 100%)',
+      backdropFilter: 'blur(20px)',
+      border: '1px solid rgba(255,255,255,0.3)',
       borderRadius: '16px',
       margin: '20px',
-      maxWidth: '320px',
-      boxShadow: '0 10px 40px rgba(0,0,0,0.15)',
-      overflow: 'hidden'
+      maxWidth: '300px',
+      maxHeight: '70vh',
+      boxShadow: '0 20px 40px rgba(0,0,0,0.12), 0 8px 16px rgba(0,0,0,0.08)',
+      overflow: 'hidden',
+      position: 'relative'
+    },
+    '& .MuiBackdrop-root': {
+      backgroundColor: 'rgba(0,0,0,0.3)',
+      backdropFilter: 'blur(8px)'
     }
   },
   dialogTitle: {
-    backgroundColor: '#f8f9fa',
+    background: 'linear-gradient(135deg, rgba(255, 107, 107, 0.05) 0%, rgba(238, 90, 36, 0.05) 100%)',
+    color: '#333',
     textAlign: 'center',
-    fontSize: '16px',
+    fontSize: '15px',
     fontWeight: 600,
-    padding: '20px 24px 16px',
-    borderBottom: '1px solid #e9ecef',
-    margin: 0
+    padding: '14px 40px 12px 20px',
+    margin: 0,
+    borderRadius: '16px 16px 0 0',
+    textShadow: 'none',
+    position: 'relative',
+    borderBottom: '1px solid rgba(255, 107, 107, 0.1)',
+    '&::before': {
+      content: '""',
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      height: '1px',
+      background: 'linear-gradient(90deg, transparent, rgba(255, 107, 107, 0.2), transparent)'
+    }
   },
   dialogContent: {
-    padding: '20px 24px',
+    padding: '12px 20px 20px',
+    color: '#2c3e50',
+    backgroundColor: 'transparent',
+    maxHeight: '200px',
+    overflowY: 'auto',
+    position: 'relative',
     '& p': {
-      marginBottom: '16px',
-      fontSize: '14px',
+      marginBottom: '12px',
+      fontSize: '13px',
       lineHeight: 1.5,
+      fontWeight: 400,
       '&:last-child': {
         marginBottom: '0px'
       }
     },
     '& strong': {
-      fontWeight: 600,
-      color: '#e55039'
+      fontWeight: 700,
+      color: '#e74c3c'
+    },
+    '&::-webkit-scrollbar': {
+      width: '3px'
+    },
+    '&::-webkit-scrollbar-track': {
+      background: 'transparent'
+    },
+    '&::-webkit-scrollbar-thumb': {
+      background: 'rgba(255, 107, 107, 0.3)',
+      borderRadius: '2px'
+    },
+    '&::after': {
+      content: '""',
+      position: 'sticky',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      height: '15px',
+      background: 'linear-gradient(to bottom, transparent 0%, rgba(255,255,255,0.9) 80%)',
+      pointerEvents: 'none'
     }
   },
   dialogActions: {
-    backgroundColor: '#f8f9fa',
-    padding: '12px 24px 20px',
-    justifyContent: 'center',
-    borderTop: '1px solid #e9ecef',
-    '& button': {
-      backgroundColor: '#e55039',
-      color: 'white',
-      borderRadius: '8px',
-      padding: '8px 24px',
-      fontSize: '14px',
-      fontWeight: 600,
-      textTransform: 'none' as const,
-      '&:hover': {
-        backgroundColor: '#d63031'
-      }
-    }
+    display: 'none'
   },
   mainButton: {
     background: 'white',
@@ -463,18 +494,33 @@ const index: React.FC<Props> = () => {
       >
         <DialogTitle className={classes.dialogTitle}>
           🍅 Pomodoro Timer Help
+          <Button 
+            onClick={() => setHelpOpen(false)}
+            style={{
+              position: 'absolute',
+              right: '8px',
+              top: '8px',
+              background: 'rgba(0, 0, 0, 0.05)',
+              color: '#666',
+              borderRadius: '50%',
+              padding: '4px',
+              fontSize: '14px',
+              minWidth: '24px',
+              width: '24px',
+              height: '24px',
+              border: 'none',
+              transition: 'all 0.2s ease'
+            }}
+          >
+            ✕
+          </Button>
         </DialogTitle>
         <DialogContent className={classes.dialogContent}>
-          <p><strong>Work (min):</strong> How long you want to focus without interruption. Usually 25-50 minutes.</p>
-          <p><strong>Break (min):</strong> How long you want to rest after each work session. Usually 5-15 minutes.</p>
-          <p><strong>Warn (sec):</strong> A warning sound plays this many seconds before your timer ends, so you can prepare to wrap up.</p>
-          <p><strong>How it works:</strong> Start a work session → Timer counts down → Warning sound → Break time automatically starts → Repeat!</p>
+          <p>⏰ <strong>Work (min):</strong> Focus time without interruption. Typically 25-50 minutes for optimal productivity.</p>
+          <p>☕ <strong>Break (min):</strong> Rest period after each work session. Usually 5-15 minutes to recharge.</p>
+          <p>🔔 <strong>Warn (sec):</strong> Warning sound plays before timer ends, helping you wrap up smoothly.</p>
+          <p>🔄 <strong>How it works:</strong> Start work session → Focus deeply → Warning alert → Auto break starts → Repeat cycle!</p>
         </DialogContent>
-        <DialogActions className={classes.dialogActions}>
-          <Button onClick={() => setHelpOpen(false)}>
-            Got it!
-          </Button>
-        </DialogActions>
       </Dialog>
     </div>
   )
