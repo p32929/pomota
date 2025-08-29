@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles';
-import { Button, TextField } from "@material-ui/core";
+import { Button, TextField, Dialog, DialogTitle, DialogContent, DialogActions, IconButton } from "@material-ui/core";
 import { useSelector } from 'react-redux';
 import { controller, initialState, IStates } from '../utils/StatesController';
 import { WebviewWindow } from '@tauri-apps/api/window';
@@ -99,6 +99,50 @@ const useStyles = makeStyles((theme) => ({
       }
     }
   },
+  helpButton: {
+    position: 'absolute',
+    top: '15px',
+    left: '15px',
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    color: 'white',
+    borderRadius: '50%',
+    width: '32px',
+    height: '32px',
+    minWidth: 'unset',
+    fontSize: '16px',
+    fontWeight: 'bold',
+    border: '1px solid rgba(255, 255, 255, 0.3)',
+    '&:hover': {
+      backgroundColor: 'rgba(255, 255, 255, 0.25)',
+    }
+  },
+  dialog: {
+    '& .MuiDialog-paper': {
+      backgroundColor: '#ff6b6b',
+      color: 'white',
+      borderRadius: '12px',
+      margin: '20px',
+      maxWidth: '280px',
+    }
+  },
+  dialogTitle: {
+    textAlign: 'center',
+    fontSize: '18px',
+    fontWeight: 600,
+    paddingBottom: '8px'
+  },
+  dialogContent: {
+    paddingTop: '0px',
+    '& p': {
+      marginBottom: '12px',
+      fontSize: '14px',
+      lineHeight: 1.4
+    },
+    '& strong': {
+      fontWeight: 600,
+      color: '#fff'
+    }
+  },
   mainButton: {
     background: 'white',
     color: '#e55039',
@@ -144,6 +188,7 @@ const index: React.FC<Props> = () => {
   const classes = useStyles();
   const [isHeartbeat, setIsHeartbeat] = useState(false);
   const [prevTimer, setPrevTimer] = useState(states.currentTimer);
+  const [helpOpen, setHelpOpen] = useState(false);
 
   const bringToFocus = async () => {
     await appWindow.unminimize()
@@ -295,6 +340,13 @@ const index: React.FC<Props> = () => {
 
   return (
     <div className={classes.root}>
+      <Button 
+        className={classes.helpButton}
+        onClick={() => setHelpOpen(true)}
+      >
+        ?
+      </Button>
+      
       <div className={classes.container}>
         <div className={`${classes.timer} ${states.pomoState !== 'idle' ? 'running' : ''} ${isHeartbeat ? 'heartbeat' : ''}`}>
           {formatTime(states.currentTimer)}
@@ -377,6 +429,30 @@ const index: React.FC<Props> = () => {
           Start Break Now
         </Button>
       </div>
+
+      <Dialog 
+        open={helpOpen} 
+        onClose={() => setHelpOpen(false)}
+        className={classes.dialog}
+      >
+        <DialogTitle className={classes.dialogTitle}>
+          🍅 Pomodoro Timer Help
+        </DialogTitle>
+        <DialogContent className={classes.dialogContent}>
+          <p><strong>Work (min):</strong> How long you want to focus without interruption. Usually 25-50 minutes.</p>
+          <p><strong>Break (min):</strong> How long you want to rest after each work session. Usually 5-15 minutes.</p>
+          <p><strong>Warn (sec):</strong> A warning sound plays this many seconds before your timer ends, so you can prepare to wrap up.</p>
+          <p><strong>How it works:</strong> Start a work session → Timer counts down → Warning sound → Break time automatically starts → Repeat!</p>
+        </DialogContent>
+        <DialogActions>
+          <Button 
+            onClick={() => setHelpOpen(false)}
+            style={{ color: 'white', fontWeight: 600 }}
+          >
+            Got it!
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   )
 
