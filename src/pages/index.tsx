@@ -118,29 +118,55 @@ const useStyles = makeStyles((theme) => ({
   },
   dialog: {
     '& .MuiDialog-paper': {
-      backgroundColor: '#ff6b6b',
-      color: 'white',
-      borderRadius: '12px',
+      backgroundColor: 'white',
+      color: '#333',
+      borderRadius: '16px',
       margin: '20px',
-      maxWidth: '280px',
+      maxWidth: '320px',
+      boxShadow: '0 10px 40px rgba(0,0,0,0.15)',
+      overflow: 'hidden'
     }
   },
   dialogTitle: {
+    backgroundColor: '#f8f9fa',
     textAlign: 'center',
-    fontSize: '18px',
+    fontSize: '16px',
     fontWeight: 600,
-    paddingBottom: '8px'
+    padding: '20px 24px 16px',
+    borderBottom: '1px solid #e9ecef',
+    margin: 0
   },
   dialogContent: {
-    paddingTop: '0px',
+    padding: '20px 24px',
     '& p': {
-      marginBottom: '12px',
+      marginBottom: '16px',
       fontSize: '14px',
-      lineHeight: 1.4
+      lineHeight: 1.5,
+      '&:last-child': {
+        marginBottom: '0px'
+      }
     },
     '& strong': {
       fontWeight: 600,
-      color: '#fff'
+      color: '#e55039'
+    }
+  },
+  dialogActions: {
+    backgroundColor: '#f8f9fa',
+    padding: '12px 24px 20px',
+    justifyContent: 'center',
+    borderTop: '1px solid #e9ecef',
+    '& button': {
+      backgroundColor: '#e55039',
+      color: 'white',
+      borderRadius: '8px',
+      padding: '8px 24px',
+      fontSize: '14px',
+      fontWeight: 600,
+      textTransform: 'none' as const,
+      '&:hover': {
+        backgroundColor: '#d63031'
+      }
     }
   },
   mainButton: {
@@ -444,11 +470,8 @@ const index: React.FC<Props> = () => {
           <p><strong>Warn (sec):</strong> A warning sound plays this many seconds before your timer ends, so you can prepare to wrap up.</p>
           <p><strong>How it works:</strong> Start a work session → Timer counts down → Warning sound → Break time automatically starts → Repeat!</p>
         </DialogContent>
-        <DialogActions>
-          <Button 
-            onClick={() => setHelpOpen(false)}
-            style={{ color: 'white', fontWeight: 600 }}
-          >
+        <DialogActions className={classes.dialogActions}>
+          <Button onClick={() => setHelpOpen(false)}>
             Got it!
           </Button>
         </DialogActions>
