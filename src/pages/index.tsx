@@ -69,6 +69,10 @@ const useStyles = makeStyles((theme) => ({
     '& .MuiInputLabel-root': {
       color: 'rgba(255, 255, 255, 0.7)',
       fontSize: '11px',
+      transform: 'translate(14px, -20px) scale(0.75)',
+      '&.Mui-focused, &.MuiFormLabel-filled': {
+        transform: 'translate(14px, -20px) scale(0.75)',
+      },
       '&.Mui-disabled': {
         color: 'rgba(255, 255, 255, 0.3)',
       }
