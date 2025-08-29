@@ -269,7 +269,7 @@ const index: React.FC<Props> = () => {
                 currentTimer: value * 60,
               })
             }}
-            label="Work"
+            label="Work (min)"
             variant="outlined"
             value={states.workTime}
             type="number"
@@ -283,7 +283,7 @@ const index: React.FC<Props> = () => {
                 breakTime: getInputValue(e)
               })
             }}
-            label="Break"
+            label="Break (min)"
             variant="outlined"
             value={states.breakTime}
             type="number"
@@ -297,7 +297,7 @@ const index: React.FC<Props> = () => {
                 warningSecs: getInputValue(e)
               })
             }}
-            label="Warn"
+            label="Warn (sec)"
             variant="outlined"
             value={states.warningSecs}
             type="number"
