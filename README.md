@@ -4,7 +4,7 @@ A simple user-friendly cross-platform tauri based pomodoro timer app that forces
 
 ## Screenshot
 
-![Pomota](https://github.com/p32929/pomota/assets/6418354/97d08ddd-1e8b-4453-98c2-9180dae8407f)
+<img width="472" height="472" alt="Image" src="https://github.com/user-attachments/assets/597675b8-b477-4b4d-8adf-ad2f4026f31b" />
 
 ## Download
 
