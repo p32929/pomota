@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles';
-import { AppBar, Button, Grid, TextField, Toolbar, Typography } from "@material-ui/core";
+import { Button, TextField } from "@material-ui/core";
 import { useSelector } from 'react-redux';
 import { controller, initialState, IStates } from '../utils/StatesController';
 import { WebviewWindow } from '@tauri-apps/api/window';
@@ -12,16 +12,108 @@ interface Props {
 }
 
 const useStyles = makeStyles((theme) => ({
-  // Define your styles here
+  root: {
+    height: '100vh',
+    width: '100vw',
+    background: 'linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%)',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+    padding: '20px'
+  },
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '20px',
+    width: '100%',
+    maxWidth: '280px'
+  },
+  timer: {
+    fontSize: '48px',
+    fontWeight: 600,
+    color: 'white',
+    fontFamily: '"SF Mono", monospace',
+    textShadow: '0 2px 12px rgba(0,0,0,0.2)',
+    textAlign: 'center'
+  },
+  inputs: {
+    display: 'flex',
+    gap: '8px',
+    width: '100%'
+  },
+  input: {
+    flex: 1,
+    '& .MuiOutlinedInput-root': {
+      backgroundColor: 'rgba(255, 255, 255, 0.12)',
+      borderRadius: '6px',
+      height: '36px',
+      '& input': {
+        color: 'white',
+        fontSize: '13px',
+        textAlign: 'center',
+        padding: '8px 4px'
+      },
+      '& fieldset': {
+        border: 'none'
+      },
+      '&.Mui-disabled': {
+        backgroundColor: 'rgba(255, 255, 255, 0.06)',
+        '& input': {
+          color: 'rgba(255, 255, 255, 0.4)',
+        }
+      }
+    },
+    '& .MuiInputLabel-root': {
+      color: 'rgba(255, 255, 255, 0.7)',
+      fontSize: '11px',
+      '&.Mui-disabled': {
+        color: 'rgba(255, 255, 255, 0.3)',
+      }
+    }
+  },
+  mainButton: {
+    background: 'white',
+    color: '#e55039',
+    borderRadius: '8px',
+    padding: '12px',
+    fontSize: '15px',
+    fontWeight: 600,
+    textTransform: 'none' as const,
+    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+    width: '100%',
+    '&:hover': {
+      background: '#f8f8f8',
+    }
+  },
+  breakButton: {
+    background: 'rgba(255, 255, 255, 0.15)',
+    color: 'white',
+    borderRadius: '6px',
+    padding: '8px',
+    fontSize: '13px',
+    fontWeight: 500,
+    textTransform: 'none' as const,
+    border: '1px solid rgba(255, 255, 255, 0.2)',
+    width: '100%',
+    '&:hover': {
+      background: 'rgba(255, 255, 255, 0.2)',
+    },
+    '&:disabled': {
+      background: 'rgba(255, 255, 255, 0.05)',
+      color: 'rgba(255, 255, 255, 0.3)',
+      border: '1px solid rgba(255, 255, 255, 0.1)',
+    }
+  }
 }));
 
 const STORED_STATE = "STORED_STATE"
-const style = { width: '100%', marginTop: 12 }
 var intervalObj = null
 var appWindow: WebviewWindow = null
 
-const index: React.FC<Props> = (props) => {
-  // Hooks
+const index: React.FC<Props> = () => {
   const states = useSelector(() => controller.states);
   const classes = useStyles();
 
@@ -64,15 +156,11 @@ const index: React.FC<Props> = (props) => {
 
   }, [])
 
-  const getInputValue = (e) => {
+  const getInputValue = (e: any) => {
     if (e.target.value == '') {
       e.target.value = '0'
     };
-    var value = value = parseInt(e.target.value)
-    // if (value < 1) {
-    //   value = 1
-    // }
-    // console.log(`Value: ${value}`)
+    var value = parseInt(e.target.value)
     return value
   }
 
@@ -100,12 +188,16 @@ const index: React.FC<Props> = (props) => {
 
   const getButtonText = () => {
     if (states.pomoState == 'idle') {
-      return "START"
+      return "Start Session"
     }
     else {
-      return "STOP"
+      return "Stop Timer"
     }
   }
+
+  const formatTime = (seconds: number) => {
+    return new Date(seconds * 1000).toISOString().substring(14, 19);
+  };
 
   const startWorkTimer = () => {
     console.log("START")
@@ -159,37 +251,61 @@ const index: React.FC<Props> = (props) => {
   }
 
   return (
-    <Grid container direction='column' justifyContent='center' alignContent='center' alignItems='center'>
-      <AppBar elevation={8} position='static'>
-        <Toolbar>
-          <Typography variant='h6' style={{ flexGrow: 1, fontWeight: 100, fontFamily: 'cursive' }}>
-            💻 {states.pomoState.toUpperCase()}
-          </Typography>
+    <div className={classes.root}>
+      <div className={classes.container}>
+        <div className={classes.timer}>
+          {formatTime(states.currentTimer)}
+        </div>
+        
+        <div className={classes.inputs}>
+          <TextField
+            className={classes.input}
+            size="small"
+            disabled={states.pomoState !== 'idle'}
+            onChange={(e) => {
+              const value = getInputValue(e);
+              controller.setState({
+                workTime: value,
+                currentTimer: value * 60,
+              })
+            }}
+            label="Work"
+            variant="outlined"
+            value={states.workTime}
+            type="number"
+          />
+          <TextField
+            className={classes.input}
+            size="small"
+            disabled={states.pomoState !== 'idle'}
+            onChange={(e) => {
+              controller.setState({
+                breakTime: getInputValue(e)
+              })
+            }}
+            label="Break"
+            variant="outlined"
+            value={states.breakTime}
+            type="number"
+          />
+          <TextField
+            className={classes.input}
+            size="small"
+            disabled={states.pomoState !== 'idle'}
+            onChange={(e) => {
+              controller.setState({
+                warningSecs: getInputValue(e)
+              })
+            }}
+            label="Warn"
+            variant="outlined"
+            value={states.warningSecs}
+            type="number"
+          />
+        </div>
 
-          <Typography variant='h6' style={{ fontWeight: 100, fontFamily: 'cursive' }}>
-            ⏲️ {new Date(states.currentTimer * 1000).toISOString().substring(14, 19)}
-          </Typography>
-        </Toolbar>
-      </AppBar>
-
-      <Grid container direction='column' justifyContent='center' alignContent='center' alignItems='center' style={{ padding: 16 }}>
-        <TextField color='secondary' size='small' disabled={states.pomoState !== 'idle'} onChange={(e) => {
-          controller.setState({
-            workTime: getInputValue(e),
-            currentTimer: getInputValue(e) * 60,
-          })
-        }} style={{ ...style, marginTop: 16 }} label='Work time ( minutes )' variant='outlined' value={states.workTime} type='number' />
-        <TextField color='secondary' size='small' disabled={states.pomoState !== 'idle'} onChange={(e) => {
-          controller.setState({
-            breakTime: getInputValue(e)
-          })
-        }} style={style} label='Break time ( minutes )' variant='outlined' value={states.breakTime} type='number' />
-        <TextField color='secondary' size='small' disabled={states.pomoState !== 'idle'} onChange={(e) => {
-          controller.setState({
-            warningSecs: getInputValue(e)
-          })
-        }} style={style} label='Play warning sound be/for ( seconds )' variant='outlined' value={states.warningSecs} type='number' />
-        <Button color='secondary' size='small' style={style} variant='outlined'
+        <Button
+          className={classes.mainButton}
           onClick={() => {
             if (intervalObj === null) {
               startWorkTimer()
@@ -199,9 +315,13 @@ const index: React.FC<Props> = (props) => {
               stopWorkTimer()
             }
           }}
-        >{getButtonText()}</Button>
+        >
+          {getButtonText()}
+        </Button>
 
-        <Button color='secondary' disabled={states.pomoState !== 'idle'} size='small' style={style} variant='outlined'
+        <Button
+          className={classes.breakButton}
+          disabled={states.pomoState !== 'idle'}
           onClick={() => {
             controller.setState({
               currentTimer: 0,
@@ -210,58 +330,13 @@ const index: React.FC<Props> = (props) => {
               startWorkTimer()
             }
           }}
-        >BREAK</Button>
-      </Grid>
-
-    </Grid >
+        >
+          Start Break Now
+        </Button>
+      </div>
+    </div>
   )
 
-  // Ui V1
-  // return (
-  //   <Grid container direction='column' justifyContent='center' alignContent='center' alignItems='center' style={{ padding: 16 }}>
-  //     <Typography style={{ fontSize: 16 }} variant='h6'>{states.pomoState.toUpperCase()}</Typography>
-  //     <Typography style={{ fontSize: 24 }} variant='h6'>...::: {new Date(states.currentTimer * 1000).toISOString().substring(14, 19)} :::...</Typography>
-  //     <TextField size='small' disabled={states.pomoState !== 'idle'} onChange={(e) => {
-  //       controller.setState({
-  //         workTime: getInputValue(e),
-  //         currentTimer: getInputValue(e) * 60,
-  //       })
-  //     }} style={{ ...style, marginTop: 16 }} label='Work time ( minutes )' variant='outlined' value={states.workTime} type='number' />
-  //     <TextField size='small' disabled={states.pomoState !== 'idle'} onChange={(e) => {
-  //       controller.setState({
-  //         breakTime: getInputValue(e)
-  //       })
-  //     }} style={style} label='Break time ( minutes )' variant='outlined' value={states.breakTime} type='number' />
-  //     <TextField size='small' disabled={states.pomoState !== 'idle'} onChange={(e) => {
-  //       controller.setState({
-  //         warningSecs: getInputValue(e)
-  //       })
-  //     }} style={style} label='Play warning sound be/for ( seconds )' variant='outlined' value={states.warningSecs} type='number' />
-  //     <Button size='small' style={style} variant='outlined'
-  //       onClick={() => {
-  //         if (intervalObj == null) {
-  //           startWorkTimer()
-  //           saveStateObj()
-  //         }
-  //         else {
-  //           stopWorkTimer()
-  //         }
-  //       }}
-  //     >{getButtonText()}</Button>
-
-  //     <Button disabled={states.pomoState === 'break'} size='small' style={style} variant='outlined'
-  //       onClick={() => {
-  //         controller.setState({
-  //           currentTimer: 0,
-  //         })
-  //         if (intervalObj == null) {
-  //           startWorkTimer()
-  //         }
-  //       }}
-  //     >BREAK</Button>
-
-  //   </Grid>
-  // )
 
 }
 
