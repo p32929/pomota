@@ -37,12 +37,26 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: '"SF Mono", monospace',
     textShadow: '0 2px 12px rgba(0,0,0,0.2)',
     textAlign: 'center',
-    transition: 'all 0.3s ease-in-out',
     lineHeight: 1.1,
     marginBottom: '32px',
-    '&.animate': {
-      transform: 'scale(1.05)',
-      textShadow: '0 4px 20px rgba(0,0,0,0.4)',
+    transition: 'transform 0.5s ease-out, font-size 0.3s ease-out',
+    '&.running': {
+      fontSize: '54px',
+    },
+    '&.heartbeat': {
+      animation: '$heartbeat 0.6s ease-out',
+    }
+  },
+  '@keyframes heartbeat': {
+    '0%': {
+      transform: 'scale(1)',
+    },
+    '30%': {
+      transform: 'scale(1.08)',
+      textShadow: '0 4px 20px rgba(255,255,255,0.3)',
+    },
+    '100%': {
+      transform: 'scale(1)',
     }
   },
   inputs: {
@@ -128,7 +142,7 @@ var appWindow: WebviewWindow = null
 const index: React.FC<Props> = () => {
   const states = useSelector(() => controller.states);
   const classes = useStyles();
-  const [isAnimating, setIsAnimating] = useState(false);
+  const [isHeartbeat, setIsHeartbeat] = useState(false);
   const [prevTimer, setPrevTimer] = useState(states.currentTimer);
 
   const bringToFocus = async () => {
@@ -171,13 +185,19 @@ const index: React.FC<Props> = () => {
   }, [])
 
   useEffect(() => {
-    if (states.currentTimer !== prevTimer && states.pomoState !== 'idle') {
-      setIsAnimating(true);
-      const timer = setTimeout(() => setIsAnimating(false), 300);
-      setPrevTimer(states.currentTimer);
-      return () => clearTimeout(timer);
+    setPrevTimer(states.currentTimer);
+    
+    if (states.pomoState !== 'idle') {
+      setIsHeartbeat(false);
+      // Force a brief delay then trigger heartbeat
+      const startBeat = setTimeout(() => {
+        setIsHeartbeat(true);
+        const endBeat = setTimeout(() => setIsHeartbeat(false), 600);
+        return () => clearTimeout(endBeat);
+      }, 50);
+      return () => clearTimeout(startBeat);
     }
-  }, [states.currentTimer, prevTimer, states.pomoState]);
+  }, [states.currentTimer, states.pomoState]);
 
   const getInputValue = (e: any) => {
     if (e.target.value == '') {
@@ -276,7 +296,7 @@ const index: React.FC<Props> = () => {
   return (
     <div className={classes.root}>
       <div className={classes.container}>
-        <div className={`${classes.timer} ${isAnimating ? 'animate' : ''}`}>
+        <div className={`${classes.timer} ${states.pomoState !== 'idle' ? 'running' : ''} ${isHeartbeat ? 'heartbeat' : ''}`}>
           {formatTime(states.currentTimer)}
         </div>
         
