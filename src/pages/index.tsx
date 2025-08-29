@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, TextField } from "@material-ui/core";
 import { useSelector } from 'react-redux';
@@ -27,22 +27,29 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    gap: '20px',
     width: '100%',
     maxWidth: '280px'
   },
   timer: {
-    fontSize: '48px',
+    fontSize: '50px',
     fontWeight: 600,
     color: 'white',
     fontFamily: '"SF Mono", monospace',
     textShadow: '0 2px 12px rgba(0,0,0,0.2)',
-    textAlign: 'center'
+    textAlign: 'center',
+    transition: 'all 0.3s ease-in-out',
+    lineHeight: 1.1,
+    marginBottom: '32px',
+    '&.animate': {
+      transform: 'scale(1.05)',
+      textShadow: '0 4px 20px rgba(0,0,0,0.4)',
+    }
   },
   inputs: {
     display: 'flex',
     gap: '8px',
-    width: '100%'
+    width: '100%',
+    marginBottom: '20px'
   },
   input: {
     flex: 1,
@@ -69,9 +76,9 @@ const useStyles = makeStyles((theme) => ({
     '& .MuiInputLabel-root': {
       color: 'rgba(255, 255, 255, 0.7)',
       fontSize: '11px',
-      transform: 'translate(14px, -20px) scale(0.75)',
+      transform: 'translate(10px, -14px) scale(0.75)',
       '&.Mui-focused, &.MuiFormLabel-filled': {
-        transform: 'translate(14px, -20px) scale(0.75)',
+        transform: 'translate(10px, -14px) scale(0.75)',
       },
       '&.Mui-disabled': {
         color: 'rgba(255, 255, 255, 0.3)',
@@ -88,6 +95,7 @@ const useStyles = makeStyles((theme) => ({
     textTransform: 'none' as const,
     boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
     width: '100%',
+    marginBottom: '12px',
     '&:hover': {
       background: '#f8f8f8',
     }
@@ -120,6 +128,8 @@ var appWindow: WebviewWindow = null
 const index: React.FC<Props> = () => {
   const states = useSelector(() => controller.states);
   const classes = useStyles();
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [prevTimer, setPrevTimer] = useState(states.currentTimer);
 
   const bringToFocus = async () => {
     await appWindow.unminimize()
@@ -159,6 +169,15 @@ const index: React.FC<Props> = () => {
     }
 
   }, [])
+
+  useEffect(() => {
+    if (states.currentTimer !== prevTimer && states.pomoState !== 'idle') {
+      setIsAnimating(true);
+      const timer = setTimeout(() => setIsAnimating(false), 300);
+      setPrevTimer(states.currentTimer);
+      return () => clearTimeout(timer);
+    }
+  }, [states.currentTimer, prevTimer, states.pomoState]);
 
   const getInputValue = (e: any) => {
     if (e.target.value == '') {
@@ -257,7 +276,7 @@ const index: React.FC<Props> = () => {
   return (
     <div className={classes.root}>
       <div className={classes.container}>
-        <div className={classes.timer}>
+        <div className={`${classes.timer} ${isAnimating ? 'animate' : ''}`}>
           {formatTime(states.currentTimer)}
         </div>
         
