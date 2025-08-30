@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { controller, initialState, IStates } from '../utils/StatesController';
 import { WebviewWindow } from '@tauri-apps/api/window';
 import { listen } from '@tauri-apps/api/event';
-import * as wt from 'worker-timers';
+import { invoke } from '@tauri-apps/api/tauri';
 
 interface Props {
 
@@ -273,9 +273,7 @@ const index: React.FC<Props> = () => {
 
         appWindow.onResized((size) => {
           // console.log(`onResized`, size)
-          if (size.payload.height === 0 && size.payload.width === 0) {
-            appWindow.hide()
-          }
+          // Don't hide window when minimized - this was causing timer issues
         })
       })
 
@@ -284,12 +282,23 @@ const index: React.FC<Props> = () => {
       })
     }
 
+    // Listen for timer ticks from Rust backend
+    const unlistenTimer = listen('timer-tick', () => {
+      if (intervalObj !== null) {
+        handleTimerTick();
+      }
+    });
+
+    return () => {
+      unlistenTimer.then(f => f());
+    };
+
   }, [])
 
   useEffect(() => {
-    setPrevTimer(states.currentTimer);
-    
-    if (states.pomoState !== 'idle') {
+    // Only trigger heartbeat animation when timer value changes and is different from previous
+    if (states.currentTimer !== prevTimer && states.pomoState !== 'idle') {
+      setPrevTimer(states.currentTimer);
       setIsHeartbeat(false);
       // Force a brief delay then trigger heartbeat
       const startBeat = setTimeout(() => {
@@ -299,7 +308,7 @@ const index: React.FC<Props> = () => {
       }, 50);
       return () => clearTimeout(startBeat);
     }
-  }, [states.currentTimer, states.pomoState]);
+  }, [states.currentTimer, states.pomoState, prevTimer]);
 
   const getInputValue = (e: any) => {
     if (e.target.value == '') {
@@ -344,49 +353,62 @@ const index: React.FC<Props> = () => {
     return new Date(seconds * 1000).toISOString().substring(14, 19);
   };
 
-  const startWorkTimer = () => {
+  const handleTimerTick = () => {
+    const warningSound = new Audio('warning.mp3')
+    const finishSound = new Audio('finish.mp3')
+    
+    let timerNow = controller.states.currentTimer - 1;
+
+    if (timerNow < 0) {
+      if (controller.states.pomoState == 'work') {
+        timerNow = controller.states.breakTime * 60
+
+        controller.setState({
+          currentTimer: timerNow,
+          pomoState: 'break'
+        })
+        bringToFocus()
+      }
+      else if (controller.states.pomoState == 'break') {
+        stopWorkTimer()
+        return;
+      }
+      finishSound.play()
+    }
+    else {
+      if (timerNow <= controller.states.warningSecs) {
+        warningSound.play()
+      }
+
+      controller.setState({
+        currentTimer: timerNow
+      })
+    }
+  }
+
+  const startWorkTimer = async () => {
     console.log("START")
     controller.setState({
       pomoState: 'work'
     })
-    const warningSound = new Audio('warning.mp3')
-    const finishSound = new Audio('finish.mp3')
-    var timerNow = controller.states.currentTimer;
-
-    intervalObj = wt.setInterval(() => {
-      timerNow--
-
-      if (timerNow < 0) {
-        if (controller.states.pomoState == 'work') {
-          timerNow = controller.states.breakTime * 60
-
-          controller.setState({
-            currentTimer: timerNow,
-            pomoState: 'break'
-          })
-          bringToFocus()
-        }
-        else if (controller.states.pomoState == 'break') {
-          stopWorkTimer()
-        }
-        finishSound.play()
-      }
-      else {
-        if (timerNow <= controller.states.warningSecs) {
-          warningSound.play()
-        }
-
-        controller.setState({
-          currentTimer: timerNow
-        })
-      }
-
-    }, 1000)
+    
+    try {
+      await invoke('start_background_timer');
+      intervalObj = true; // Just mark that timer is running
+    } catch (error) {
+      console.error('Failed to start timer:', error);
+    }
   }
 
-  const stopWorkTimer = () => {
+  const stopWorkTimer = async () => {
     console.log("STOP")
-    wt.clearInterval(intervalObj)
+    
+    try {
+      await invoke('stop_background_timer');
+    } catch (error) {
+      console.error('Failed to stop timer:', error);
+    }
+    
     controller.setState({
       pomoState: 'idle',
       currentTimer: controller.states.workTime * 60

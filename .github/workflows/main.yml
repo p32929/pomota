@@ -13,15 +13,13 @@ jobs:
 
     runs-on: ${{ matrix.platform }}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: setup node
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v4
       with:
-        node-version: 16
+        node-version: 18
     - name: install Rust stable
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: stable
+      uses: dtolnay/rust-toolchain@stable
     - name: install dependencies (ubuntu only)
       if: matrix.platform == 'ubuntu-22.04'
       run: |
@@ -29,13 +27,13 @@ jobs:
         sudo apt-get install -y libgtk-3-dev webkit2gtk-4.0 libappindicator3-dev librsvg2-dev patchelf libsoup2.4-dev libjavascriptcoregtk-4.0-dev
     - name: install app dependencies and build it
       run: yarn && yarn build
-    - uses: tauri-apps/tauri-action@v0
+    - uses: tauri-apps/tauri-action@v0.5
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         APPLE_SIGNING_IDENTITY: "-"
       with:
         tagName: app-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version
-        releaseName: "App v__VERSION__"
-        releaseBody: "See the assets to download this version and install."
-        releaseDraft: true
+        releaseName: "Pomota v__VERSION__"
+        releaseBody: "🍅 Pomota Pomodoro Timer v__VERSION__\n\nA beautiful and functional Pomodoro timer built with Tauri and React.\n\n**What's New:**\n- Improved timer reliability when minimized\n- Enhanced UI with modern design\n- Better performance with Rust backend\n\n**Download:** Choose the appropriate installer for your platform from the assets below."
+        releaseDraft: false
         prerelease: false
