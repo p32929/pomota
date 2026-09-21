@@ -1,6 +1,14 @@
-## Pomota
+# Pomota
 
-A simple user-friendly cross-platform tauri based pomodoro timer app that forces you to take a break
+A small, cross-platform Pomodoro timer that actually forces you to take the break — built with Tauri, so the whole app is a few MB instead of a few hundred.
+
+## Features
+
+- **Forces the break** — the timer doesn't quietly let you skip it
+- **Audio cues** — a warning sound before the break, a finish sound when it's over
+- **Tiny** — Tauri + Rust instead of a bundled browser
+- **Windows, macOS and Linux** from one codebase
+- **Accurate in the background** — uses `worker-timers`, so the countdown doesn't drift when the tab or window is idle
 
 ## Screenshot
 
@@ -8,18 +16,19 @@ A simple user-friendly cross-platform tauri based pomodoro timer app that forces
 
 ## Download
 
-From here: https://github.com/p32929/pomota/releases
+Grab the installer for your OS from the [releases page](https://github.com/p32929/pomota/releases).
 
-## Share with your friends
+## Build from source
 
-[![facebook](https://user-images.githubusercontent.com/6418354/179013321-ac1d1452-0689-493f-9066-940cf2302b6e.png)](https://www.facebook.com/sharer/sharer.php?u=https://github.com/p32929/pomota)
-[![twitter](https://user-images.githubusercontent.com/6418354/179013351-7d8d6d1c-4ce2-46ab-bef8-4c4765a1b888.png)](https://twitter.com/intent/tweet?url=https://github.com/p32929/pomota)
-[![whatsapp](https://user-images.githubusercontent.com/6418354/179013353-f477fa0b-3e6f-4138-a357-c9991b23ff88.png)](https://api.whatsapp.com/send?text=https://github.com/p32929/pomota)
-[![linkedin](https://user-images.githubusercontent.com/6418354/179013327-ca7b7102-1da8-4b1c-858f-1a6e5f21bd70.png)](https://www.linkedin.com/shareArticle?mini=true&url=https://github.com/p32929/pomota)
-[![pinterest](https://user-images.githubusercontent.com/6418354/179013331-44cd9206-11b1-4b65-becb-5863b61c828f.png)](https://pinterest.com/pin/create/button/?url=https://github.com/p32929/pomota)
-[![reddit](https://user-images.githubusercontent.com/6418354/179013338-7416ae3f-73ba-4522-86e1-1374d7082d22.png)](https://www.reddit.com/submit?url=https://github.com/p32929/pomota)
-[![pocket](https://user-images.githubusercontent.com/6418354/179013334-b095c45f-becf-49f4-9ee1-5a731a9b1f85.png)](https://getpocket.com/save?url=https://github.com/p32929/pomota)
-[![tumblr](https://user-images.githubusercontent.com/6418354/179013343-3111f55a-3b90-40c7-8487-9777348672b0.png)](https://www.tumblr.com/share?v=3&u=https://github.com/p32929/pomota)
+You'll need [Node.js](https://nodejs.org/) and the [Tauri prerequisites](https://tauri.app/start/prerequisites/) (Rust toolchain).
+
+```bash
+git clone https://github.com/p32929/pomota.git
+cd pomota
+npm install
+npm run tauri dev     # run it
+npm run tauri build   # produce an installer for your OS
+```
 
 ## License
 
@@ -46,6 +55,30 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
+
+## Contributing
+
+Contributions are warmly welcomed and greatly appreciated! Whether it's a bug fix, new feature, or improvement, your input helps make this project better for everyone.
+
+Before submitting a pull request, please:
+
+1. Create an issue describing the feature or bug fix you'd like to work on
+2. Wait for discussion and approval to ensure alignment with project goals
+3. Fork the repository and create your feature branch
+4. Submit your pull request with a clear description of changes
+
+This approach helps avoid duplicate efforts and ensures smooth collaboration. Thank you for considering contributing!
+
+## Share with your friends
+
+[![facebook](https://user-images.githubusercontent.com/6418354/179013321-ac1d1452-0689-493f-9066-940cf2302b6e.png)](https://www.facebook.com/sharer/sharer.php?u=https://github.com/p32929/pomota)
+[![twitter](https://user-images.githubusercontent.com/6418354/179013351-7d8d6d1c-4ce2-46ab-bef8-4c4765a1b888.png)](https://twitter.com/intent/tweet?url=https://github.com/p32929/pomota)
+[![whatsapp](https://user-images.githubusercontent.com/6418354/179013353-f477fa0b-3e6f-4138-a357-c9991b23ff88.png)](https://api.whatsapp.com/send?text=https://github.com/p32929/pomota)
+[![linkedin](https://user-images.githubusercontent.com/6418354/179013327-ca7b7102-1da8-4b1c-858f-1a6e5f21bd70.png)](https://www.linkedin.com/shareArticle?mini=true&url=https://github.com/p32929/pomota)
+[![pinterest](https://user-images.githubusercontent.com/6418354/179013331-44cd9206-11b1-4b65-becb-5863b61c828f.png)](https://pinterest.com/pin/create/button/?url=https://github.com/p32929/pomota)
+[![reddit](https://user-images.githubusercontent.com/6418354/179013338-7416ae3f-73ba-4522-86e1-1374d7082d22.png)](https://www.reddit.com/submit?url=https://github.com/p32929/pomota)
+[![pocket](https://user-images.githubusercontent.com/6418354/179013334-b095c45f-becf-49f4-9ee1-5a731a9b1f85.png)](https://getpocket.com/save?url=https://github.com/p32929/pomota)
+[![tumblr](https://user-images.githubusercontent.com/6418354/179013343-3111f55a-3b90-40c7-8487-9777348672b0.png)](https://www.tumblr.com/share?v=3&u=https://github.com/p32929/pomota)
 
 ---
 
