@@ -17,6 +17,10 @@ struct Payload {
     cwd: String,
 }
 
+fn open_url(app: &AppHandle, url: &str) {
+    let _ = tauri::api::shell::open(&app.shell_scope(), url.to_string(), None);
+}
+
 fn show_app(app: &AppHandle) {
     let window = app.get_window("main").unwrap();
     window.unminimize().unwrap();
@@ -35,10 +39,15 @@ fn main() {
     //     .expect("error while running tauri application");
 
     let show = CustomMenuItem::new("show".to_string(), "Show");
+    let support = CustomMenuItem::new("support".to_string(), "Support this app ☕");
+    let hire = CustomMenuItem::new("hire".to_string(), "Need a custom build?");
     let quit = CustomMenuItem::new("quit".to_string(), "Quit");
 
     let tray_menu = SystemTrayMenu::new()
         .add_item(show)
+        .add_native_item(SystemTrayMenuItem::Separator)
+        .add_item(support)
+        .add_item(hire)
         .add_native_item(SystemTrayMenuItem::Separator)
         .add_item(quit);
 
@@ -76,6 +85,12 @@ fn main() {
                 "show" => {
                     println!("Show");
                     show_app(&app);
+                }
+                "support" => {
+                    open_url(&app, "https://www.buymeacoffee.com/p32929");
+                }
+                "hire" => {
+                    open_url(&app, "https://p32929.github.io/hire/");
                 }
                 _ => {}
             },
